@@ -106,5 +106,31 @@ resources/views/layout.php	The main visual layout framework (HTML/CSS) featuring
 resources/views/dashboard.php	The interface view for the investigation case list and quick buttons.
 resources/views/investigation_form.php	The form interface view for inputting OSINT target parameters.
 storage/	Local storage folder for the SQLite database file (neuromap.db), logs, exports, and investigation evidence (ignored by Git).
+
+
+
+
+### Recapitulation of NEUROMAP Repository Components & Functions
+
+
+| Directory & File                              | Main Function in the System                                                                                                                                      |
+| --------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `app/Auth/Session.php`                        | Manages a secure HTTP session lifecycle, `HttpOnly` cookie settings, and session ID regeneration to prevent session fixation.                                    |
+| `app/Auth/Auth.php`                           | Handles admin login credential verification using standard PHP hashing functions (`password_hash` and `password_verify`).                                        |
+| `app/Controllers/DashboardController.php`     | Retrieves the list of active cases/investigations from the database for display on the main dashboard page.                                                      |
+| `app/Controllers/InvestigationController.php` | Processes target form inputs, saves investigation data to the database, triggers the QueryBuilder, and handles sending instant reports to Telegram.              |
+| `app/Controllers/SearchController.php`        | Retrieves specific case details along with the generated history of search runs.                                                                                 |
+| `app/Services/QueryBuilder.php`               | The core dorking engine that reads templates from the database and replaces dynamic placeholders (`{{full_name}}`, `{{email}}`, etc.).                           |
+| `app/Services/TelegramService.php`            | Integrates with the Telegram Bot API to send search summaries and investigation reports instantly.                                                               |
+| `app/Providers/SearchProviderInterface.php`   | Defines a standard interface for search engine provider adapters.                                                                                                |
+| `app/Providers/GoogleLinkProvider.php`        | Generates properly encoded Google dork search URLs.                                                                                                              |
+| `config/app.php`                              | Stores global application configuration settings, including the Telegram Bot Token and Chat ID.                                                                  |
+| `database/schema.sql`                         | Defines the SQLite database schema, including the `users`, `cases`, `query_templates`, `search_runs`, and `findings` tables, along with built-in dork templates. |
+| `public/index.php`                            | The main application entry point (Front Controller/Router) that routes HTTP requests to the appropriate controllers.                                             |
+| `resources/views/layout.php`                  | Provides the main visual layout framework (HTML/CSS) featuring a Graphite & Emerald theme.                                                                       |
+| `resources/views/dashboard.php`               | Displays the investigation case list and quick-action buttons.                                                                                                   |
+| `resources/views/investigation_form.php`      | Provides the form interface for entering OSINT investigation parameters.                                                                                         |
+| `storage/`                                    | Stores the local SQLite database (`neuromap.db`), logs, exports, and investigation evidence. This directory is excluded from Git tracking.                       |
+| `composer.json`                               | Manages PHP dependencies and defines the PSR-4 autoloader mapping for the `App\` namespace.                                                                      |
 composer.json	PHP dependency manager and PSR-4 autoloader map for the App\ namespace.
 
