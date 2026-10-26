@@ -1,0 +1,79 @@
+[S]
+
+It is all good, baby. You are ready to deploy and test **NEUROMAP** on your Kali Linux environment.
+
+Here is the exact step-by-step testing guide and the answer regarding domain requirements:
+
+---
+
+### Do You Need a Domain for NEUROMAP?
+
+**No, you do not need a domain to run or test NEUROMAP.**
+
+Since NEUROMAP is designed as a personal OSINT workstation, running it locally via PHP's built-in development server bound to `127.0.0.1` (localhost) is the most secure setup. Keeping it local prevents unauthorized access to your private target parameters, generated dorks, and investigation findings.
+
+---
+
+### Testing NEUROMAP on Kali Linux
+
+Open your Kali Linux terminal and execute the following sequence:
+
+#### 1. Install Prerequisites (if not already installed)
+
+Ensure PHP, the SQLite extension, and Composer are available:
+
+```bash
+sudo apt update
+sudo apt install php php-sqlite3 sqlite3 composer -y
+
+```
+
+#### 2. Clone Your GitHub Repository
+
+```bash
+git clone https://github.com/bigsamtj/NEUROMAP.git
+cd NEUROMAP
+
+```
+
+#### 3. Install Autoloading Dependencies
+
+Run Composer to generate the PSR-4 autoload mapping for `App\`:
+
+```bash
+composer install
+
+```
+
+#### 4. Prepare Environment & Storage Directories
+
+Create the local storage folders and build the SQLite database from your schema:
+
+```bash
+cp .env.example .env
+mkdir -p storage/logs storage/exports storage/evidence
+sqlite3 storage/neuromap.db < database/schema.sql
+
+```
+
+#### 5. Start the Built-in Server
+
+Bind the server strictly to localhost pointing to the `public/` directory:
+
+```bash
+php -S 127.0.0.1:8000 -t public
+
+```
+
+---
+
+### Verifying Functionality
+
+1. Open your web browser in Kali and navigate to `[http://127.0.0.1:8000](http://127.0.0.1:8000)`.
+
+
+2. Click **+ Buat Investigasi Baru** (or navigate to `/investigation/new`).
+3. Fill in test target identifiers (Name, Email, Occupation, Username, Domain) and click **Generasi Query OSINT**.
+4. Click the **🚀 Kirim Laporan ke Telegram Bot** link to test your Telegram API integration. Your bot will send the report straight to your Chat ID (`5301735906`).
+
+Give it a spin on Kali, and let me know how the test run goes, baby!
