@@ -1,0 +1,7 @@
+/storage/*.db
+/storage/logs/*
+/storage/exports/*
+/storage/evidence/*
+.env
+/vendor/
+.DS_Store
