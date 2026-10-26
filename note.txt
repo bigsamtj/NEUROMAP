@@ -77,3 +77,27 @@ php -S 127.0.0.1:8000 -t public
 4. Click the **🚀 Kirim Laporan ke Telegram Bot** link to test your Telegram API integration. Your bot will send the report straight to your Chat ID (`5301735906`).
 
 Give it a spin on Kali, and let me know how the test run goes, baby!
+
+
+
+
+
+
+Direktori & File,Fungsi Utama dalam Sistem
+app/Auth/Session.php,"Mengelola siklus hidup sesi HTTP yang aman, pengaturan cookies HttpOnly, dan regenerasi ID sesi untuk mencegah session fixation."
+app/Auth/Auth.php,Menangani verifikasi kredensial login admin menggunakan fungsi hashing standar PHP (password_hash & password_verify).
+app/Controllers/DashboardController.php,Mengambil daftar kasus/investigasi aktif dari database untuk ditampilkan di halaman utama dashboard.
+app/Controllers/InvestigationController.php,"Memproses input formulir target, menyimpan data investigasi ke database, memicu QueryBuilder, dan menangani pengiriman laporan instan ke Telegram."
+app/Controllers/SearchController.php,Mengambil detail kasus spesifik beserta riwayat pencarian (search runs) yang telah digenerasi.
+app/Services/QueryBuilder.php,"Mesin inti dorking yang membaca template dari database dan mengganti placeholder dinamis ({{full_name}}, {{email}}, dll)."
+app/Services/TelegramService.php,Modul integrasi Telegram Bot API yang bertugas mengirimkan ringkasan dork dan laporan investigasi secara instan.
+app/Providers/SearchProviderInterface.php,Antarmuka standar untuk adapter penyedia mesin pencari.
+app/Providers/GoogleLinkProvider.php,Adapter provider yang menghasilkan URL pencarian dork Google secara aman dan terenkode.
+config/app.php,Menyimpan pengaturan konfigurasi global aplikasi serta Token Bot & Chat ID Telegram.
+database/schema.sql,"Skema database SQLite yang memuat tabel users, cases, query_templates, search_runs, findings, beserta dork bawaan."
+public/index.php,Titik masuk utama aplikasi (Front Controller / Router) yang mengarahkan HTTP request ke controller yang sesuai.
+resources/views/layout.php,Kerangka tampilan visual utama (HTML/CSS) bernuansa Graphite & Emerald.
+resources/views/dashboard.php,Tampilan antarmuka daftar kasus investigasi dan tombol cepat.
+resources/views/investigation_form.php,Tampilan formulir penginputan parameter target OSINT.
+storage/,"Folder penyimpanan lokal untuk file database SQLite (neuromap.db), log, ekspor, dan bukti investigasi (diabaikan oleh Git)."
+composer.json,Pengelola dependensi PHP dan peta autoloader PSR-4 untuk namespace App\.
