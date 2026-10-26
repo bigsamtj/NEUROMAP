@@ -83,21 +83,28 @@ Give it a spin on Kali, and let me know how the test run goes, baby!
 
 
 
-Direktori & File,Fungsi Utama dalam Sistem
-app/Auth/Session.php,"Mengelola siklus hidup sesi HTTP yang aman, pengaturan cookies HttpOnly, dan regenerasi ID sesi untuk mencegah session fixation."
-app/Auth/Auth.php,Menangani verifikasi kredensial login admin menggunakan fungsi hashing standar PHP (password_hash & password_verify).
-app/Controllers/DashboardController.php,Mengambil daftar kasus/investigasi aktif dari database untuk ditampilkan di halaman utama dashboard.
-app/Controllers/InvestigationController.php,"Memproses input formulir target, menyimpan data investigasi ke database, memicu QueryBuilder, dan menangani pengiriman laporan instan ke Telegram."
-app/Controllers/SearchController.php,Mengambil detail kasus spesifik beserta riwayat pencarian (search runs) yang telah digenerasi.
-app/Services/QueryBuilder.php,"Mesin inti dorking yang membaca template dari database dan mengganti placeholder dinamis ({{full_name}}, {{email}}, dll)."
-app/Services/TelegramService.php,Modul integrasi Telegram Bot API yang bertugas mengirimkan ringkasan dork dan laporan investigasi secara instan.
-app/Providers/SearchProviderInterface.php,Antarmuka standar untuk adapter penyedia mesin pencari.
-app/Providers/GoogleLinkProvider.php,Adapter provider yang menghasilkan URL pencarian dork Google secara aman dan terenkode.
-config/app.php,Menyimpan pengaturan konfigurasi global aplikasi serta Token Bot & Chat ID Telegram.
-database/schema.sql,"Skema database SQLite yang memuat tabel users, cases, query_templates, search_runs, findings, beserta dork bawaan."
-public/index.php,Titik masuk utama aplikasi (Front Controller / Router) yang mengarahkan HTTP request ke controller yang sesuai.
-resources/views/layout.php,Kerangka tampilan visual utama (HTML/CSS) bernuansa Graphite & Emerald.
-resources/views/dashboard.php,Tampilan antarmuka daftar kasus investigasi dan tombol cepat.
-resources/views/investigation_form.php,Tampilan formulir penginputan parameter target OSINT.
-storage/,"Folder penyimpanan lokal untuk file database SQLite (neuromap.db), log, ekspor, dan bukti investigasi (diabaikan oleh Git)."
-composer.json,Pengelola dependensi PHP dan peta autoloader PSR-4 untuk namespace App\.
+Great that it has been tested on Kali, baby! Now it is time to polish its appearance so that it features a Graphite & Emerald Minimalist UI theme that is sharp, professional, and easy on the eyes for OSINT investigations.
+Below is a complete recapitulation of everything we have built, the function of each NEUROMAP repository directory/file, as well as updates to the CSS interface and its view files.
+
+Recapitulation of NEUROMAP Repository Components & Functions
+
+
+Directory & File	Main Function in the System
+app/Auth/Session.php	Manages a secure HTTP session lifecycle, HttpOnly cookie settings, and session ID regeneration to prevent session fixation.
+app/Auth/Auth.php	Handles admin login credential verification using standard PHP hashing functions (password_hash & password_verify).
+app/Controllers/DashboardController.php	Retrieves the list of active cases/investigations from the database to be displayed on the main dashboard page.
+app/Controllers/InvestigationController.php	Processes target form inputs, saves investigation data to the database, triggers the QueryBuilder, and handles sending instant reports to Telegram.
+app/Controllers/SearchController.php	Retrieves specific case details along with the generated history of search runs (search runs).
+app/Services/QueryBuilder.php	The core dorking engine that reads templates from the database and replaces dynamic placeholders ({{full_name}}, {{email}}, etc.).
+app/Services/TelegramService.php	Telegram Bot API integration module tasked with sending dork summaries and investigation reports instantly.
+app/Providers/SearchProviderInterface.php	Standard interface for search engine provider adapters.
+app/Providers/GoogleLinkProvider.php	Provider adapter that generates secure and properly encoded Google dork search URLs.
+config/app.php	Stores global application configuration settings as well as the Telegram Bot Token & Chat ID.
+database/schema.sql	SQLite database schema containing the tables users, cases, query_templates, search_runs, findings, along with the built-in dorks.
+public/index.php	The main application entry point (Front Controller / Router) that routes HTTP requests to the appropriate controllers.
+resources/views/layout.php	The main visual layout framework (HTML/CSS) featuring a Graphite & Emerald theme.
+resources/views/dashboard.php	The interface view for the investigation case list and quick buttons.
+resources/views/investigation_form.php	The form interface view for inputting OSINT target parameters.
+storage/	Local storage folder for the SQLite database file (neuromap.db), logs, exports, and investigation evidence (ignored by Git).
+composer.json	PHP dependency manager and PSR-4 autoloader map for the App\ namespace.
+
