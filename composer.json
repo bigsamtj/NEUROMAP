@@ -1,0 +1,20 @@
+{
+    "name": "bigsamtj/neuromap",
+    "description": "Personal OSINT Investigation & Intelligence Reconnaissance Station",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Samuel Adeyinka [BigSam]"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/"
+        }
+    },
+    "require": {
+        "php": ">=8.3"
+    },
+    "minimum-stability": "stable"
+}
