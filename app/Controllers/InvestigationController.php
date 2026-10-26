@@ -20,26 +20,43 @@ class InvestigationController
         $caseRef = 'NEURO-' . strtoupper(substr(md5(uniqid()), 0, 8));
         
         $title = $_POST['title'] ?? 'Kasus Tanpa Judul';
-        $fullName = $_POST['full_name'] ?? null;
+        $surname = $_POST['surname'] ?? null;
+        $firstName = $_POST['first_name'] ?? null;
+        $phone = $_POST['phone'] ?? null;
+        $nin = $_POST['nin'] ?? null;
+        $instagram = $_POST['instagram'] ?? null;
+        $twitter = $_POST['twitter'] ?? null;
+        $facebook = $_POST['facebook'] ?? null;
+        $linkedin = $_POST['linkedin'] ?? null;
         $email = $_POST['email'] ?? null;
-        $occupation = $_POST['occupation'] ?? null;
-        $usernameHandle = $_POST['username_handle'] ?? null;
+        $organization = $_POST['organization'] ?? null;
         $knownDomains = $_POST['known_domains'] ?? null;
 
-        // Simpan data kasus ke database
-        $stmt = $db->prepare("INSERT INTO cases (case_ref, title, full_name, email, occupation, username_handle, known_domains) VALUES (?, ?, ?, ?, ?, ?, ?)");
-        $stmt->execute([$caseRef, $title, $fullName, $email, $occupation, $usernameHandle, $knownDomains]);
+        // Simpan data kasus dengan parameter Nigeria ke database
+        $stmt = $db->prepare("INSERT INTO cases (case_ref, title, surname, first_name, phone, nin, instagram, twitter, facebook, linkedin, email, organization, known_domains) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->execute([
+            $caseRef, 
+            $title, 
+            $surname, 
+            $firstName, 
+            $phone, 
+            $nin, 
+            $instagram, 
+            $twitter, 
+            $facebook, 
+            $linkedin, 
+            $email, 
+            $organization, 
+            $knownDomains
+        ]);
         $caseId = $db->lastInsertId();
 
-        // Ambil template dork aktif
-        $templates = $db->query("SELECT * FROM query_templates WHERE is_active = 1")->fetchAll();
-
-        // Generasi query
+        // Generasi query menggunakan QueryBuilder
         $qb = new QueryBuilder();
         $provider = new GoogleLinkProvider();
-        $queries = $qb->generateQueries($_POST, $templates);
+        $queries = $qb->generateQueries($_POST);
 
-        // Simpan pencarian ke database
+        // Simpan pencarian ke database search_runs
         foreach ($queries as $q) {
             $searchUrl = $provider->buildSearchUrl($q['query']);
             $runStmt = $db->prepare("INSERT INTO search_runs (case_id, template_id, query_text, provider, search_url, status) VALUES (?, ?, ?, ?, ?, 'NOT_RUN')");
