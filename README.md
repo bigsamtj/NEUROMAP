@@ -1,8 +1,3 @@
-[S]
-
-README yang disesuaikan khusus untuk **NEUROMAP**:
-
-```markdown
 # NEUROMAP
 
 > **Personal OSINT Investigation & Intelligence Reconnaissance Station**
