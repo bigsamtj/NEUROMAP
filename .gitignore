@@ -1,7 +1,26 @@
-/storage/*.db
-/storage/logs/*
-/storage/exports/*
-/storage/evidence/*
+# Environment
 .env
+
+# Database
+storage/neuromap.db
+storage/*.db
+
+# Logs & uploads
+storage/logs/*
+storage/reports/*
+storage/evidence/*
+!storage/logs/.gitkeep
+!storage/reports/.gitkeep
+!storage/evidence/.gitkeep
+
+# Composer
 /vendor/
+
+# OS files
 .DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
