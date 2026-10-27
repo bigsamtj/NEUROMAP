@@ -16,21 +16,22 @@ class SearchController
 
         $db = Database::getConnection();
         
-        // Ambil data kasus berdasarkan referensi
+        // Fetch case details by reference
         $stmt = $db->prepare("SELECT * FROM cases WHERE case_ref = ?");
         $stmt->execute([$ref]);
         $case = $stmt->fetch();
 
         if (!$case) {
-            echo "Kasus tidak ditemukan.";
+            echo "Case not found in database.";
             exit;
         }
 
-        // Ambil daftar query search_runs yang terkait
+        // Fetch associated search runs
         $runStmt = $db->prepare("SELECT * FROM search_runs WHERE case_id = ?");
         $runStmt->execute([$case['id']]);
         $searchRuns = $runStmt->fetchAll();
 
-        require_once __DIR__ . '/../../resources/views/investigation_form.php'; // atau file view hasil
+        // Render the show view
+        require_once __DIR__ . '/../../resources/views/investigations/show.php';
     }
 }
