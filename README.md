@@ -1,5 +1,9 @@
 # NEUROMAP
 
+<p align="center">
+  <img src="public/assets/img/logo.png" alt="NEUROMAP Logo" width="160">
+</p>
+
 > **Personal OSINT Investigation & Intelligence Reconnaissance Station**  
 > **Creator:** Samuel Adeyinka [BigSam]
 
@@ -30,6 +34,9 @@ neuromap/
 ├── database/
 │   └── schema.sql
 ├── public/
+│   ├── assets/
+│   │   └── img/
+│   │       └── logo.png
 │   └── index.php
 ├── resources/
 │   └── views/
