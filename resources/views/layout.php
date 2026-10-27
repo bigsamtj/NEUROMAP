@@ -66,7 +66,6 @@
             font-weight: bold;
             display: inline-block;
             text-decoration: none;
-            margin-bottom: 20px;
         }
         .btn-telegram:hover {
             opacity: 0.9;
@@ -98,16 +97,19 @@
             border-radius: 4px;
             font-size: 13px;
         }
-        ul {
-            padding-left: 20px;
-        }
-        li {
-            margin-bottom: 15px;
-        }
     </style>
 </head>
 <body>
     <div class="wrapper">
+        <!-- Header with Logo Integration -->
+        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 25px; border-bottom: 1px solid var(--border-color); padding-bottom: 15px;">
+            <img src="/assets/img/logo.png" alt="NEUROMAP" style="width: 48px; height: 48px; object-fit: contain; border-radius: 4px; border: 1px solid var(--border-color); background: #000; padding: 4px;">
+            <div>
+                <h1 style="margin: 0; font-size: 20px; border: none; padding: 0; color: #fff;">NEUROMAP</h1>
+                <span style="font-size: 12px; color: var(--accent-emerald);">Intelligence Reconnaissance Station</span>
+            </div>
+        </div>
+
         <?= $content ?? '' ?>
     </div>
 </body>
