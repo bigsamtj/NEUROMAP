@@ -57,10 +57,10 @@ $router->get('/logout', [App\Controllers\AuthController::class, 'logout']);
 $router->get('/', [App\Controllers\DashboardController::class, 'index']);
 $router->get('/dashboard', [App\Controllers\DashboardController::class, 'index']);
 
-// Placeholder for future investigation routes
-// $router->get('/investigation/create', [App\Controllers\InvestigationController::class, 'create']);
-// $router->post('/investigation/store', [App\Controllers\InvestigationController::class, 'store']);
-// $router->get('/investigation/{id}', [App\Controllers\InvestigationController::class, 'show']);
+// Investigations
+$router->get('/investigation/create', [App\Controllers\InvestigationController::class, 'create']);
+$router->post('/investigation/store', [App\Controllers\InvestigationController::class, 'store']);
+$router->get('/investigation/{id}', [App\Controllers\InvestigationController::class, 'show']);
 
 // Dispatch
 $router->dispatch($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']);
