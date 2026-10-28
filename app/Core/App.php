@@ -6,7 +6,6 @@ class App
 {
     public static function init(): void
     {
-        // Ensure required storage folders exist
         $folders = [
             __DIR__ . '/../../storage/logs',
             __DIR__ . '/../../storage/reports',
@@ -20,7 +19,10 @@ class App
         }
     }
 
-    public static function view(string $name, array $data = []): void
+    /**
+     * Render a view (optionally inside the main layout)
+     */
+    public static function view(string $name, array $data = [], bool $useLayout = true): void
     {
         extract($data);
 
@@ -31,7 +33,22 @@ class App
             return;
         }
 
+        // If layout is disabled (e.g. login page), render directly
+        if (!$useLayout) {
+            require $viewPath;
+            return;
+        }
+
+        // Capture the view content
+        ob_start();
         require $viewPath;
+        $content = ob_get_clean();
+
+        // Make title available to layout
+        $title = $title ?? 'NEUROMAP';
+
+        // Render layout with content
+        require __DIR__ . '/../../resources/views/layout.php';
     }
 
     public static function basePath(string $path = ''): string
