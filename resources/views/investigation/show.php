@@ -13,6 +13,7 @@
             --muted: #9ca3af;
             --accent: #10b981;
             --accent-dim: rgba(16, 185, 129, 0.12);
+            --success: #34d399;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -147,7 +148,12 @@
             color: var(--text);
         }
 
-        .btn-primary:hover, .btn-secondary:hover {
+        .btn-telegram {
+            background: #0088cc;
+            color: white;
+        }
+
+        .btn:hover {
             opacity: 0.9;
         }
 
@@ -155,6 +161,8 @@
             display: flex;
             flex-direction: column;
             gap: 10px;
+            max-height: 500px;
+            overflow-y: auto;
         }
 
         .query-item {
@@ -183,14 +191,20 @@
             white-space: nowrap;
         }
 
-        .query-actions a:hover {
-            text-decoration: underline;
-        }
-
         .count {
             font-size: 0.85rem;
             color: var(--muted);
             font-weight: 400;
+        }
+
+        .alert-success {
+            background: rgba(16, 185, 129, 0.12);
+            border: 1px solid var(--accent);
+            color: var(--success);
+            padding: 14px 18px;
+            border-radius: 10px;
+            margin-bottom: 24px;
+            font-size: 0.95rem;
         }
     </style>
 </head>
@@ -202,6 +216,12 @@
     </header>
 
     <div class="container">
+
+        <?php if (isset($_GET['sent'])): ?>
+            <div class="alert-success">
+                ✓ Report successfully generated and sent to Telegram.
+            </div>
+        <?php endif; ?>
 
         <div class="header">
             <div>
@@ -274,6 +294,9 @@
             <div style="display: flex; gap: 12px; flex-wrap: wrap;">
                 <a href="/investigation/<?= $investigation['id'] ?>/generate-dorks" class="btn btn-primary">
                     Generate Dorks
+                </a>
+                <a href="/investigation/<?= $investigation['id'] ?>/send-report" class="btn btn-telegram">
+                    Send Report to Telegram
                 </a>
                 <a href="/dashboard" class="btn btn-secondary">Back to Dashboard</a>
             </div>
