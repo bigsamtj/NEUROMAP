@@ -9,12 +9,12 @@ class AuthController
 {
     public function showLogin(): void
     {
-        // If already logged in, go to dashboard
         if (Helper::isLoggedIn()) {
             Helper::redirect('/dashboard');
         }
 
-        App::view('login');
+        // Login page should not use the main layout
+        App::view('login', [], false);
     }
 
     public function login(): void
@@ -33,10 +33,9 @@ class AuthController
             Helper::redirect('/dashboard');
         }
 
-        // Failed login
         App::view('login', [
             'error' => 'Invalid username or password'
-        ]);
+        ], false);
     }
 
     public function logout(): void
