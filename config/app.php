@@ -20,14 +20,14 @@ return [
     // Telegram
     'telegram' => [
         'enabled'   => true,
-        'bot_token' => $_ENV['TELEGRAM_BOT_TOKEN'] ?? '',
-        'chat_id'   => $_ENV['TELEGRAM_CHAT_ID'] ?? '',
+        'bot_token' => $_ENV['8703136899:AAH8Uc6QlJqGoC_e18POb1NG4-SuSXmBc3M'] ?? '',
+        'chat_id'   => $_ENV['5301735906'] ?? '',
     ],
 
     // Admin credentials (simple auth for now)
     'admin' => [
         'username' => $_ENV['ADMIN_USERNAME'] ?? 'admin',
-        'password' => $_ENV['ADMIN_PASSWORD'] ?? 'change_this_password',
+        'password' => $_ENV['ADMIN_PASSWORD'] ?? 'bigsam',
     ],
 
     // Paths
