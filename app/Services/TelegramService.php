@@ -12,7 +12,7 @@ class TelegramService
     {
         $config = require __DIR__ . '/../../config/app.php';
 
-        $this->enabled = $config['telegram']['enabled'] ?? true;
+        $this->enabled = $config['telegram']['enabled'] ?? false;
         $this->token   = $config['telegram']['bot_token'] ?? '';
         $this->chatId  = $config['telegram']['chat_id'] ?? '';
     }
