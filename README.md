@@ -4,10 +4,27 @@
   <img src="public/assets/img/logo.png" alt="NEUROMAP Logo" width="160">
 </p>
 
-> **Personal OSINT Investigation & Intelligence Reconnaissance Station**  
-> **Creator:** Samuel Adeyinka [BigSam]
+<p align="center">
+  <strong>Personal OSINT Investigation & Intelligence Reconnaissance Station</strong><br>
+  <strong>Creator:</strong> Samuel Adeyinka [BigSam]
+</p>
 
-NEUROMAP is a lightweight, PHP-native OSINT investigation platform designed to organize subject identities, map advanced search queries (dorks), test digital footprints, and structure investigation findings securely.
+NEUROMAP is a powerful, self-hosted PHP OSINT investigation platform.  
+It allows you to create investigation cases, profile targets, automatically generate advanced Google dorks, collect findings, and receive full intelligence reports directly on Telegram.
+
+---
+
+## Current Features
+
+- Secure Login / Authentication
+- Investigation Case Management
+- Target Profiling (Name, Aliases, Emails, Phones, Usernames, Locations, Organizations, Websites)
+- Advanced Dork Engine (Name, Email, Phone, Username, Social, File, Combined queries)
+- One-click “Open in Google” for every generated dork
+- Professional Report Builder
+- Instant Telegram Report Delivery
+- Report saved as downloadable text file
+- Clean dark interface
 
 ---
 
@@ -16,19 +33,19 @@ NEUROMAP is a lightweight, PHP-native OSINT investigation platform designed to o
 ```text
 neuromap/
 ├── app/
-│   ├── Auth/
-│   │   ├── Session.php
-│   │   └── Auth.php
+│   ├── Core/
+│   │   ├── App.php
+│   │   ├── Database.php
+│   │   ├── Helper.php
+│   │   └── Router.php
 │   ├── Controllers/
+│   │   ├── AuthController.php
 │   │   ├── DashboardController.php
-│   │   ├── InvestigationController.php
-│   │   └── SearchController.php
-│   ├── Services/
-│   │   ├── QueryBuilder.php
-│   │   └── TelegramService.php
-│   └── Providers/
-│       ├── SearchProviderInterface.php
-│       └── GoogleLinkProvider.php
+│   │   └── InvestigationController.php
+│   └── Services/
+│       ├── DorkEngine.php
+│       ├── ReportBuilder.php
+│       └── TelegramService.php
 ├── config/
 │   └── app.php
 ├── database/
@@ -40,29 +57,30 @@ neuromap/
 │   └── index.php
 ├── resources/
 │   └── views/
-│       ├── layout.php
 │       ├── login.php
 │       ├── dashboard.php
-│       └── investigation_form.php
+│       └── investigation/
+│           ├── create.php
+│           └── show.php
 ├── storage/
 │   ├── logs/
-│   ├── exports/
+│   ├── reports/
 │   └── evidence/
 ├── .env.example
 ├── .gitignore
 ├── composer.json
 └── README.md
-
 ```
 
 ---
 
 ## Tech Stack
 
-* **Backend:** PHP 8.3+ (Modular, Lightweight Architecture)
-* **Database:** SQLite 3 via PDO (Fast, Single-file, Zero-config)
-* **Frontend:** HTML5, CSS3, Vanilla JavaScript (Graphite & Emerald Minimalist UI)
-* **Dependencies:** Composer (Autoloading via PSR-4)
+- **Backend:** PHP 8.1+
+- **Database:** SQLite 3 (via PDO)
+- **Architecture:** Lightweight custom MVC
+- **Frontend:** Modern dark UI (HTML + CSS)
+- **Dependencies:** Composer (PSR-4 Autoloading)
 
 ---
 
@@ -70,48 +88,85 @@ neuromap/
 
 ### 1. Requirements
 
-* PHP 8.3 or newer (with `pdo_sqlite` extension enabled).
-* Composer installed globally.
+- PHP 8.1 or higher (with `pdo_sqlite` and `curl` extensions)
+- Composer
 
-### 2. Quickstart & Storage Initialization
+### 2. Quick Start
 
 ```bash
 # Clone the repository
-git clone [https://github.com/bigsamtj/NEUROMAP.git](https://github.com/bigsamtj/NEUROMAP.git) neuromap
-cd neuromap
+git clone https://github.com/bigsamtj/NEUROMAP.git
+cd NEUROMAP
 
-# Install dependencies via Composer
+# Install dependencies
 composer install
 
-# Set up local environment configuration
+# Create environment file
 cp .env.example .env
 
-# Create storage directories and initialize the SQLite database
-mkdir -p storage/logs storage/exports storage/evidence
+# Edit .env and add your Telegram Bot Token + Chat ID + Admin password
+
+# Create storage folders and database
+mkdir -p storage/logs storage/reports storage/evidence
 sqlite3 storage/neuromap.db < database/schema.sql
 
-# Run the local development server (Point document root to public/)
+# Start the development server
 php -S 127.0.0.1:8000 -t public
-
 ```
 
-Access the NEUROMAP dashboard in your browser at `http://127.0.0.1:8000`.
+Open your browser and visit:
+
+```
+http://127.0.0.1:8000
+```
+
+**Default Login:**
+- Username: `admin`
+- Password: (the one you set in `.env`)
 
 ---
 
-## Core Features
+## How to Use
 
-1. **Target Profiling:** Flexible ingestion for full names, aliases, emails, phone numbers, usernames, domains, and organizations.
-2. **Automated Dorking Engine:** Automatic generation of search queries based on customizable templates (`{{full_name}}`, `{{email}}`, `{{username}}`, etc.).
-3. **Execution Tracking:** Track search execution statuses per query (`FOUND`, `NO_RESULTS`, `REQUIRES_REVIEW`, `PROVIDER_ERROR`).
-4. **Evidence Workspace & Telegram Alerts:** Record source links, snippets, analyst notes, verification status, and instantly push reports to your Telegram bot.
+1. Login to the dashboard
+2. Click **+ New Investigation**
+3. Enter the subject’s known details
+4. Click **Generate Dorks**
+5. Review the generated search queries and open them in Google
+6. Click **Send Report to Telegram** to receive the full intelligence report
+
+---
+
+## Telegram Setup
+
+1. Create a bot using [@BotFather](https://t.me/BotFather)
+2. Get your Chat ID using [@userinfobot](https://t.me/userinfobot)
+3. Add both values to your `.env` file:
+
+```env
+TELEGRAM_BOT_TOKEN=your_bot_token
+TELEGRAM_CHAT_ID=your_chat_id
+```
 
 ---
 
 ## Security Notice
 
-* Ensure your web server's document root points strictly to the `public/` folder.
-* Never publish your `storage/neuromap.db` database file or sensitive environment configurations to public repositories.
+- Always point your web server document root to the `public/` folder only
+- Never commit your real `.env` file or the SQLite database
+- Change the default admin password immediately
+
+---
+
+## Roadmap
+
+- [x] Phase 1 – Foundation
+- [x] Phase 2 – Investigation & Target System
+- [x] Phase 3 – Advanced Dork Engine
+- [x] Phase 4 – Report Builder + Telegram
+- [ ] Phase 5 – Evidence Collection System
+- [ ] Phase 6 – UI Polish
+- [ ] Phase 7 – Social Media Scanners
 
 ---
 
@@ -119,6 +174,12 @@ Access the NEUROMAP dashboard in your browser at `http://127.0.0.1:8000`.
 
 Distributed under the MIT License.
 
+---
+
+**NEUROMAP** — Built for precision. Designed for intelligence.  
+**Creator:** Samuel Adeyinka (BigSam)
 ```
 
-```
+---
+
+Would you like to continue to **Phase 5 (Evidence Collection System)** now?
