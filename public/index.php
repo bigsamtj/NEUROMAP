@@ -64,5 +64,9 @@ $router->get('/investigation/{id}', [App\Controllers\InvestigationController::cl
 $router->get('/investigation/{id}/generate-dorks', [App\Controllers\InvestigationController::class, 'generateDorks']);
 $router->get('/investigation/{id}/send-report', [App\Controllers\InvestigationController::class, 'sendReport']);
 
+// Evidence
+$router->post('/evidence/store', [App\Controllers\EvidenceController::class, 'store']);
+$router->get('/evidence/{id}/delete', [App\Controllers\EvidenceController::class, 'delete']);
+
 // Dispatch
 $router->dispatch($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']);
