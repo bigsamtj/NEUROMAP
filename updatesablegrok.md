@@ -9,16 +9,17 @@ We will **redesign and rebuild NEUROMAP from the ground up** — more powerful, 
 ```
 neuromap/
 ├── public/                     ← Web root
-│   ├── index.php
+│   ├── index.php✔️✔️
 │   ├── assets/
 │   └── .htaccess
 │
 ├── app/
-│   ├── Core/                   ← Router, Database, Config, Helpers
+│   ├── Core/                   ← Router✔️, Database✔️, Config, Helpers✔️
+            App.php✔️
 │   ├── Controllers/
-│   │   ├── AuthController.php
-│   │   ├── DashboardController.php
-│   │   ├── InvestigationController.php
+│   │   ├── AuthController.php✔️
+│   │   ├── DashboardController.php✔️
+│   │   ├── InvestigationController.php✔️
 │   │   └── ReportController.php
 │   ├── Models/
 │   │   ├── User.php
@@ -37,29 +38,29 @@ neuromap/
 │   └── Middleware/
 │
 ├── config/
-│   ├── app.php
+│   ├── app.php   ✔️
 │   ├── database.php
 │   └── telegram.php
 │
 ├── database/
-│   └── schema.sql
+│   └── schema.sql✔️
 │
 ├── storage/
-│   ├── logs/
-│   ├── reports/
-│   └── evidence/
+│   ├── logs/✔️
+│   ├── reports/✔️
+│   └── evidence/✔️
 │
 ├── resources/views/
 │   ├── layout.php
-│   ├── login.php
-│   ├── dashboard.php
+│   ├── login.php✔️
+│   ├── dashboard.php✔️
 │   ├── investigation/
-│   │   ├── create.php
-│   │   ├── show.php
+│   │   ├── create.php✔️
+│   │   ├── show.php✔️
 │   │   └── report.php
 │   └── components/
-│
-├── .env
+│✔️
+├── .env✔️
 ├── composer.json
 └── README.md
 ```
