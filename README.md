@@ -179,7 +179,3 @@ Distributed under the MIT License.
 **NEUROMAP** — Built for precision. Designed for intelligence.  
 **Creator:** Samuel Adeyinka (BigSam)
 ```
-
----
-
-Would you like to continue to **Phase 5 (Evidence Collection System)** now?
