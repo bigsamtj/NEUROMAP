@@ -41,8 +41,14 @@ class Router
 
                 if (is_array($handler)) {
                     [$controller, $methodName] = $handler;
-                    // Ensure absolute namespace resolution by prepending a leading backslash
-                    $controller = '\\' . ltrim($controller, '\\');
+                    
+                    // Neutralize any accidental duplication and ensure absolute namespace resolution
+                    $controller = ltrim($controller, '\\');
+                    if (str_starts_with($controller, 'App\\Core\\App\\')) {
+                        $controller = substr($controller, strlen('App\\Core\\'));
+                    }
+                    $controller = '\\' . $controller;
+
                     $controllerInstance = new $controller();
                     call_user_func_array([$controllerInstance, $methodName], $matches);
                 } else {
