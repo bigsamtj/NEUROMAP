@@ -6,13 +6,12 @@
 
 declare(strict_types=1);
 
-// Start session
 session_start();
 
 // Load Composer autoloader
 require_once __DIR__ . '/../vendor/autoload.php';
 
-// Load environment variables (simple version)
+// Load environment variables
 $envFile = __DIR__ . '/../.env';
 if (file_exists($envFile)) {
     $lines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
@@ -37,8 +36,11 @@ if ($config['debug']) {
     ini_set('display_errors', '0');
 }
 
-// Create router
+// Initialize application
+use App\Core\App;
 use App\Core\Router;
+
+App::init();
 
 $router = new Router();
 
@@ -46,17 +48,19 @@ $router = new Router();
 // ROUTES
 // ======================
 
-// Home / Dashboard
-$router->get('/', function () {
-    echo "NEUROMAP is running. Foundation ready.";
-});
+// Auth
+$router->get('/login', [App\Controllers\AuthController::class, 'showLogin']);
+$router->post('/login', [App\Controllers\AuthController::class, 'login']);
+$router->get('/logout', [App\Controllers\AuthController::class, 'logout']);
 
-// Later we will add:
-// $router->get('/login', [App\Controllers\AuthController::class, 'showLogin']);
-// $router->post('/login', [App\Controllers\AuthController::class, 'login']);
-// $router->get('/dashboard', [App\Controllers\DashboardController::class, 'index']);
+// Dashboard
+$router->get('/', [App\Controllers\DashboardController::class, 'index']);
+$router->get('/dashboard', [App\Controllers\DashboardController::class, 'index']);
+
+// Placeholder for future investigation routes
 // $router->get('/investigation/create', [App\Controllers\InvestigationController::class, 'create']);
-// etc.
+// $router->post('/investigation/store', [App\Controllers\InvestigationController::class, 'store']);
+// $router->get('/investigation/{id}', [App\Controllers\InvestigationController::class, 'show']);
 
-// Dispatch the request
+// Dispatch
 $router->dispatch($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']);
