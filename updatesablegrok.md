@@ -102,3 +102,58 @@ Do you want me to start building from **Phase 1 (Project Foundation)** right now
 Or would you first like me to show you a more detailed technical blueprint / database schema before writing any code?
 
 
+
+
+**NEUROMAP – Full Status Report + Updated README**
+
+---
+
+### 1. What We Have Built So Far
+
+| Phase | Feature | Status |
+|-------|---------|--------|
+| **Phase 1** | Project Foundation | ✅ Completed |
+| | Config system | ✅ |
+| | Database layer (SQLite) | ✅ |
+| | Router | ✅ |
+| | Helper & App core | ✅ |
+| | Authentication (Login/Logout) | ✅ |
+| | Dashboard | ✅ |
+| **Phase 2** | Target & Investigation System | ✅ Completed |
+| | Create Investigation | ✅ |
+| | Add Target details (name, phone, email, etc.) | ✅ |
+| | View Investigation | ✅ |
+| **Phase 3** | Advanced Dork Engine | ✅ Completed |
+| | Powerful Google dork generation | ✅ |
+| | Name, Email, Phone, Username, Social, File dorks | ✅ |
+| | Generate & store queries | ✅ |
+| | Open dorks directly in Google | ✅ |
+| **Phase 4** | Report Builder + Telegram | ✅ Completed |
+| | Professional report generation | ✅ |
+| | Send report to Telegram | ✅ |
+| | Save report as file | ✅ |
+
+---
+
+### 2. Current Working Flow
+
+1. Login → Dashboard
+2. Create New Investigation
+3. Enter subject details (name, phone, email, usernames, etc.)
+4. Click **Generate Dorks** → dozens of advanced search queries are created
+5. Click **Open in Google** on any query
+6. Click **Send Report to Telegram** → full report is delivered to your bot
+
+---
+
+### 3. What Is Still Pending (Next Phases)
+
+| Phase | Feature | Priority |
+|-------|---------|----------|
+| Phase 5 | Evidence Collection System (manually add findings) | High |
+| Phase 6 | Better UI / Layout consistency | Medium |
+| Phase 7 | Social media specific scanners | Medium |
+| Phase 8 | Export report as PDF | Low |
+| Phase 9 | Multi-user support (optional) | Low |
+
+---
