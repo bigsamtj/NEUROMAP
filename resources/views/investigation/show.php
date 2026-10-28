@@ -47,7 +47,7 @@
         }
 
         .container {
-            max-width: 1000px;
+            max-width: 1100px;
             margin: 0 auto;
             padding: 40px 24px;
         }
@@ -58,6 +58,7 @@
             align-items: flex-start;
             margin-bottom: 32px;
             gap: 20px;
+            flex-wrap: wrap;
         }
 
         h1 {
@@ -93,6 +94,9 @@
             font-size: 1.1rem;
             margin-bottom: 18px;
             color: var(--accent);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .info-grid {
@@ -112,18 +116,13 @@
 
         .info-item div {
             font-size: 0.95rem;
+            word-break: break-word;
         }
 
         .empty {
             color: var(--muted);
             font-size: 0.9rem;
             padding: 12px 0;
-        }
-
-        .actions {
-            display: flex;
-            gap: 12px;
-            margin-top: 10px;
         }
 
         .btn {
@@ -147,6 +146,52 @@
             border: 1px solid var(--border);
             color: var(--text);
         }
+
+        .btn-primary:hover, .btn-secondary:hover {
+            opacity: 0.9;
+        }
+
+        .query-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .query-item {
+            background: #111318;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .query-string {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            font-size: 0.85rem;
+            color: #a5f3fc;
+            word-break: break-all;
+            flex: 1;
+        }
+
+        .query-actions a {
+            color: var(--accent);
+            text-decoration: none;
+            font-size: 0.85rem;
+            white-space: nowrap;
+        }
+
+        .query-actions a:hover {
+            text-decoration: underline;
+        }
+
+        .count {
+            font-size: 0.85rem;
+            color: var(--muted);
+            font-weight: 400;
+        }
     </style>
 </head>
 <body>
@@ -169,7 +214,7 @@
             <span class="badge"><?= htmlspecialchars($investigation['status']) ?></span>
         </div>
 
-        <!-- Target Information -->
+        <!-- Subject Information -->
         <div class="card">
             <h2>Subject Information</h2>
 
@@ -223,37 +268,49 @@
             </div>
         <?php endif; ?>
 
-        <!-- Future Actions -->
+        <!-- Actions -->
         <div class="card">
             <h2>Investigation Actions</h2>
-            <p style="color: var(--muted); margin-bottom: 16px; font-size: 0.9rem;">
-                Next phase will enable automated dork generation and deep search from here.
-            </p>
-            <div class="actions">
-                <a href="#" class="btn btn-primary" style="opacity: 0.6; pointer-events: none;">
-                    Generate Dorks (Coming in Phase 3)
+            <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                <a href="/investigation/<?= $investigation['id'] ?>/generate-dorks" class="btn btn-primary">
+                    Generate Dorks
                 </a>
                 <a href="/dashboard" class="btn btn-secondary">Back to Dashboard</a>
             </div>
         </div>
 
-        <!-- Queries Placeholder -->
+        <!-- Generated Queries -->
         <div class="card">
-            <h2>Generated Queries</h2>
+            <h2>
+                Generated Queries
+                <span class="count"><?= count($queries) ?> total</span>
+            </h2>
+
             <?php if (empty($queries)): ?>
-                <div class="empty">No queries generated yet.</div>
+                <div class="empty">No queries generated yet. Click "Generate Dorks" to begin.</div>
             <?php else: ?>
-                <!-- Will be filled in Phase 3 -->
+                <div class="query-list">
+                    <?php foreach ($queries as $query): ?>
+                        <div class="query-item">
+                            <div class="query-string"><?= htmlspecialchars($query['query_string']) ?></div>
+                            <div class="query-actions">
+                                <a href="https://www.google.com/search?q=<?= urlencode($query['query_string']) ?>" target="_blank" rel="noopener">
+                                    Open in Google ↗
+                                </a>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
             <?php endif; ?>
         </div>
 
-        <!-- Evidence Placeholder -->
+        <!-- Evidence -->
         <div class="card">
             <h2>Collected Evidence</h2>
             <?php if (empty($evidence)): ?>
                 <div class="empty">No evidence collected yet.</div>
             <?php else: ?>
-                <!-- Will be filled later -->
+                <!-- Future -->
             <?php endif; ?>
         </div>
 
