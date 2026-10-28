@@ -61,6 +61,7 @@ $router->get('/dashboard', [App\Controllers\DashboardController::class, 'index']
 $router->get('/investigation/create', [App\Controllers\InvestigationController::class, 'create']);
 $router->post('/investigation/store', [App\Controllers\InvestigationController::class, 'store']);
 $router->get('/investigation/{id}', [App\Controllers\InvestigationController::class, 'show']);
+$router->get('/investigation/{id}/generate-dorks', [App\Controllers\InvestigationController::class, 'generateDorks']);
 
 // Dispatch
 $router->dispatch($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']);
