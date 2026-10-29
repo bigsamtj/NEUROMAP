@@ -62,6 +62,7 @@ $router->get('/investigation/create', [App\Controllers\InvestigationController::
 $router->post('/investigation/store', [App\Controllers\InvestigationController::class, 'store']);
 $router->get('/investigation/{id}', [App\Controllers\InvestigationController::class, 'show']);
 $router->get('/investigation/{id}/generate-dorks', [App\Controllers\InvestigationController::class, 'generateDorks']);
+$router->get('/investigation/{id}/generate-social', [App\Controllers\InvestigationController::class, 'generateSocial']);
 $router->get('/investigation/{id}/send-report', [App\Controllers\InvestigationController::class, 'sendReport']);
 
 // Evidence
