@@ -1,92 +1,177 @@
-**NEUROMAP – Full Technical Documentation**
+# NEUROMAP Technical Document
 
-**Version:** 1.0 (Phases 1–5 Complete)  
-**Author:** Samuel Adeyinka (BigSam)  
-**Type:** Self-hosted OSINT Investigation Platform
-
----
-
-### 1. Application Overview
-
-NEUROMAP is a lightweight, self-hosted PHP application designed for structured OSINT (Open Source Intelligence) investigations.  
-
-It allows an operator to:
-
-1. Create investigation cases
-2. Profile a target with known identifiers
-3. Automatically generate advanced Google dorks
-4. Manually collect evidence
-5. Generate professional reports
-6. Send reports directly to Telegram
-
-The system is built with a clean custom MVC-style architecture using pure PHP and SQLite (no heavy frameworks).
+**Project Name:** NEUROMAP  
+**Title:** Personal OSINT Investigation & Intelligence Reconnaissance Station  
+**Creator:** Samuel Adeyinka (BigSam)  
+**Current Version:** 1.0 (Phases 1–8 Complete)  
+**Document Type:** Technical Architecture & System Documentation  
+**Status:** Stable (Version 1)
 
 ---
 
-### 2. High-Level Architecture
+## 1. Purpose
 
-```
-Browser
-   │
-   ▼
+NEUROMAP is a self-hosted OSINT investigation platform designed to support structured intelligence gathering against a subject (person, alias, organization, or digital identity).
+
+It enables an operator to:
+
+- Create investigation cases
+- Profile targets using known identifiers
+- Automatically generate advanced search queries (Google dorks and social scans)
+- Collect and organize evidence
+- Produce investigation reports
+- Deliver reports to Telegram
+
+Version 1 is an **operator-assisted** workstation.  
+Version 2 is planned as an **automated pipeline** (live search → screenshots → PDF → Telegram).
+
+---
+
+## 2. System Objectives
+
+1. Centralize OSINT case management
+2. Standardize target profiling
+3. Accelerate query generation using reusable logic
+4. Maintain evidence in a structured, reviewable format
+5. Produce consistent reports for operational use
+6. Keep deployment lightweight (PHP + SQLite, no heavy framework)
+
+---
+
+## 3. Technology Stack
+
+| Layer | Technology |
+|------|------------|
+| Language | PHP 8.1+ |
+| Database | SQLite 3 via PDO |
+| Architecture | Custom lightweight MVC |
+| Frontend | Server-rendered HTML/CSS + minimal JS |
+| Auth | Session-based single-operator auth |
+| Integrations | Telegram Bot API |
+| Dependency management | Composer (PSR-4 autoload) |
+| Runtime | PHP built-in server or standard web host |
+
+---
+
+## 4. High-Level Architecture
+
+```text
+Client (Browser)
+      │
+      ▼
 public/index.php  (Front Controller)
-   │
-   ├── Router.php
-   │       │
-   │       ├── AuthController
-   │       ├── DashboardController
-   │       ├── InvestigationController
-   │       └── EvidenceController
-   │
-   ├── Services
-   │       ├── DorkEngine
-   │       ├── ReportBuilder
-   │       └── TelegramService
-   │
-   └── Core
-           ├── Database (SQLite)
-           ├── Helper
-           └── App
+      │
+      ├── Router
+      │     ├── AuthController
+      │     ├── DashboardController
+      │     ├── InvestigationController
+      │     ├── EvidenceController
+      │     └── ReportController
+      │
+      ├── Services
+      │     ├── DorkEngine
+      │     ├── SocialScanner
+      │     ├── ReportBuilder
+      │     └── TelegramService
+      │
+      └── Core
+            ├── App
+            ├── Database
+            ├── Helper
+            └── Config
 ```
 
 ---
 
-### 3. Request Lifecycle (How a Request Works)
+## 5. Directory Structure
 
-1. User visits a URL (example: `/investigation/5`)
-2. `public/index.php` is executed
-3. Environment variables are loaded from `.env`
-4. Configuration is loaded from `config/app.php`
-5. `App::init()` ensures storage folders exist
-6. `Router` matches the URL to a controller method
-7. Controller processes the request
-8. Controller may call Services (DorkEngine, ReportBuilder, TelegramService)
-9. Controller may read/write data using `Database`
-10. Controller renders a view using `App::view()`
-11. HTML is returned to the browser
+```text
+neuromap/
+├── app/
+│   ├── Core/
+│   │   ├── App.php
+│   │   ├── Database.php
+│   │   ├── Helper.php
+│   │   └── Router.php
+│   ├── Controllers/
+│   │   ├── AuthController.php
+│   │   ├── DashboardController.php
+│   │   ├── InvestigationController.php
+│   │   ├── EvidenceController.php
+│   │   └── ReportController.php
+│   └── Services/
+│       ├── DorkEngine.php
+│       ├── SocialScanner.php
+│       ├── ReportBuilder.php
+│       └── TelegramService.php
+├── config/
+│   └── app.php
+├── database/
+│   └── schema.sql
+├── public/
+│   ├── index.php
+│   └── assets/img/
+│       ├── logo.png
+│       └── overlay.png
+├── resources/views/
+│   ├── layout.php
+│   ├── login.php
+│   ├── dashboard.php
+│   └── investigation/
+│       ├── create.php
+│       ├── show.php
+│       └── report.php
+├── storage/
+│   ├── logs/
+│   ├── reports/
+│   └── evidence/
+├── .env
+├── .env.example
+├── .gitignore
+├── composer.json
+└── README.md
+```
 
 ---
 
-### 4. Core Components Explained
+## 6. Request Lifecycle
 
-#### 4.1 Front Controller (`public/index.php`)
-- Entry point of the application
-- Loads Composer autoloader
-- Loads `.env` variables
-- Loads configuration
-- Initializes the application
+1. HTTP request hits `public/index.php`
+2. Session starts
+3. Composer autoloader loads classes
+4. `.env` values are loaded into `$_ENV`
+5. `config/app.php` is loaded
+6. `App::init()` ensures storage folders exist
+7. Router matches method + URI
+8. Target controller method executes
+9. Controller may:
+   - Validate input
+   - Read/write SQLite data
+   - Call one or more services
+10. Response is returned as:
+    - Rendered HTML view, or
+    - Redirect, or
+    - File download
+
+---
+
+## 7. Core Components
+
+### 7.1 Front Controller (`public/index.php`)
+- Application entry point
+- Boots environment, config, router
 - Defines all routes
-- Dispatches the request to the correct controller
+- Dispatches request
 
-#### 4.2 Router (`app/Core/Router.php`)
-- Registers GET and POST routes
-- Supports route parameters (example: `{id}`)
-- Matches incoming URI against registered routes
-- Calls the appropriate controller method
+### 7.2 Router (`app/Core/Router.php`)
+- Registers GET/POST routes
+- Supports path parameters (`{id}`)
+- Resolves controller callables
+- Returns 404 when unmatched
 
-#### 4.3 Database (`app/Core/Database.php`)
-- Singleton PDO connection to SQLite
-- Provides helper methods:
+### 7.3 Database (`app/Core/Database.php`)
+- Singleton PDO SQLite connection
+- Helpers:
   - `query()`
   - `fetch()`
   - `fetchAll()`
@@ -94,187 +179,304 @@ public/index.php  (Front Controller)
   - `update()`
   - `delete()`
 
-#### 4.4 Helper (`app/Core/Helper.php`)
-- Configuration access
-- Authentication checks
+### 7.4 Helper (`app/Core/Helper.php`)
+- Config access
+- Auth checks (`requireAuth`, `isLoggedIn`)
 - Redirect helper
-- Input sanitization
-- JSON response helper
+- Sanitization helpers
 
-#### 4.5 App (`app/Core/App.php`)
-- Initializes storage directories
-- Renders views
-- Provides base path helper
+### 7.5 App (`app/Core/App.php`)
+- Storage initialization
+- View rendering
+- Optional layout wrapping
 
 ---
 
-### 5. Controllers & Responsibilities
+## 8. Controllers
 
 | Controller | Responsibility |
 |----------|----------------|
-| **AuthController** | Login, Logout, Session management |
-| **DashboardController** | Shows statistics and recent investigations |
-| **InvestigationController** | Create, view, generate dorks, send reports |
-| **EvidenceController** | Add and delete evidence items |
+| `AuthController` | Login form, authentication, logout |
+| `DashboardController` | Case statistics and recent investigations |
+| `InvestigationController` | Create/view investigations, generate dorks/social scans, send Telegram report |
+| `EvidenceController` | Add and delete evidence records |
+| `ReportController` | Printable report page and TXT download |
 
 ---
 
-### 6. Services (Business Logic)
+## 9. Services
 
-#### 6.1 DorkEngine
-**Location:** `app/Services/DorkEngine.php`
+### 9.1 DorkEngine
+**Input:** Target profile fields  
+**Output:** Structured Google dork queries
 
-**Purpose:**  
-Automatically generates advanced Google dorks based on target data.
-
-**Input:** Target array (name, emails, phones, usernames, etc.)
-
-**Output:** Array of structured dorks containing:
-- type
-- platform
-- category
-- query string
-
-**Dork Categories Generated:**
-- Name-based
-- Email-based
-- Phone-based
-- Username-based
-- Organization-based
-- Location-based
-- Website-based
+Generates query categories including:
+- Name
+- Email
+- Phone
+- Username
+- Organization
+- Location
+- Website
 - Combined
-- File type searches
-- Social media site searches
+- Filetype searches
+- Social site-restricted searches
 
-#### 6.2 ReportBuilder
-**Location:** `app/Services/ReportBuilder.php`
+### 9.2 SocialScanner
+**Input:** Target names/usernames/aliases  
+**Output:**
+- Platform-specific search queries
+- Probable profile URL guesses
 
-**Purpose:**  
-Builds investigation reports in two formats:
+Platforms include Facebook, Instagram, X/Twitter, LinkedIn, TikTok, GitHub, YouTube, Reddit, Telegram, and others.
 
-1. Telegram-friendly HTML report
-2. Plain text report (saved as file)
+### 9.3 ReportBuilder
+Builds two report formats:
+1. Telegram HTML text summary
+2. Plain-text full report for file storage/download
 
-**Includes:**
-- Case information
-- Subject details
-- Generated queries summary
+Includes:
+- Case metadata
+- Subject profile
+- Query summary/samples
 - Evidence summary
 
-#### 6.3 TelegramService
-**Location:** `app/Services/TelegramService.php`
-
-**Purpose:**  
-Sends messages and documents to a Telegram bot.
-
-**Methods:**
-- `sendMessage()` → Sends text report
-- `sendDocument()` → Sends the full report file
+### 9.4 TelegramService
+Uses Telegram Bot API:
+- `sendMessage()` for text reports
+- `sendDocument()` for file delivery
 
 ---
 
-### 7. Database Schema Overview
+## 10. Database Design
 
-| Table | Purpose |
-|------|---------|
-| `users` | Simple authentication (currently config-based) |
-| `investigations` | Investigation cases |
-| `targets` | Subject/profile data linked to an investigation |
-| `queries` | Generated dorks/search queries |
-| `evidence` | Collected findings |
-| `reports` | Generated reports metadata |
+### Tables
 
----
+1. **investigations**
+   - Case title, status, notes, timestamps
 
-### 8. Main User Flows
+2. **targets**
+   - Linked to investigation
+   - Identity fields (name, aliases, emails, phones, usernames, locations, organizations, websites)
 
-#### Flow A: Create Investigation
-1. User clicks “New Investigation”
-2. Fills subject details
-3. `InvestigationController@store` saves investigation + target
-4. User is redirected to the investigation page
+3. **queries**
+   - Generated dorks/social queries
+   - Type, platform, query string, status
 
-#### Flow B: Generate Dorks
-1. User clicks “Generate Dorks”
-2. `InvestigationController@generateDorks` is called
-3. `DorkEngine` generates queries
-4. Queries are stored in the `queries` table
-5. Page reloads showing all generated dorks
+4. **evidence**
+   - Findings (title, URL, snippet, platform, type, confidence, notes)
 
-#### Flow C: Add Evidence
-1. User fills the “Add Evidence” form
-2. `EvidenceController@store` saves the evidence
-3. Evidence appears in the investigation page
+5. **reports**
+   - Generated report metadata and file path
 
-#### Flow D: Send Report to Telegram
-1. User clicks “Send Report to Telegram”
-2. `ReportBuilder` creates the report
-3. Report is saved as a `.txt` file
-4. `TelegramService` sends the message + file
-5. Investigation status is updated to `completed`
+6. **users**
+   - Reserved/simple auth support (current auth primarily config-based)
+
+Relationships are investigation-centric:
+- One investigation → one primary target record
+- One investigation → many queries
+- One investigation → many evidence items
+- One investigation → many reports
 
 ---
 
-### 9. Completed Phases (1–5)
+## 11. Major Operational Flows
 
-| Phase | Description | Status |
-|------|-------------|--------|
-| Phase 1 | Project Foundation (Core, Router, Database, Auth, Dashboard) | ✅ Completed |
-| Phase 2 | Investigation & Target System | ✅ Completed |
-| Phase 3 | Advanced Dork Engine | ✅ Completed |
-| Phase 4 | Report Builder + Telegram Delivery | ✅ Completed |
-| Phase 5 | Evidence Collection System | ✅ Completed |
+### Flow A — Authentication
+1. Operator opens `/login`
+2. Credentials checked against config admin values
+3. Session created on success
+4. Protected routes enforce authentication
 
----
+### Flow B — Create Investigation
+1. Operator submits case + target details
+2. Investigation row created
+3. Target row linked to investigation
+4. Redirect to investigation detail page
 
-### 10. Pending Phases (6–9)
+### Flow C — Generate Dorks
+1. Operator clicks **Generate Dorks**
+2. `DorkEngine` builds queries from target data
+3. Queries stored in database
+4. Investigation status set to running
+5. Queries listed with “Open in Google”
 
-| Phase | Description | Status |
-|------|-------------|--------|
-| Phase 6 | UI Polish & Layout Consistency | Pending |
-| Phase 7 | Social Media Specific Scanners | Pending |
-| Phase 8 | PDF Report Export | Pending |
-| Phase 9 | Multi-user Support (Optional) | Pending |
+### Flow D — Generate Social Scans
+1. Operator clicks **Generate Social Scans**
+2. `SocialScanner` produces platform queries and profile URL guesses
+3. Results stored as `query_type = social`
+4. Links open either Google search or direct profile URL
 
----
+### Flow E — Evidence Collection
+1. Operator adds evidence via form
+2. Evidence stored against investigation
+3. Evidence appears in case workspace
+4. Evidence can be deleted
 
-### 11. Security Notes
-
-- Document root must point only to `/public`
-- Real `.env` file must never be committed
-- SQLite database must remain private
-- Authentication is currently single-user (config-based)
-- All outputs are escaped to prevent XSS
-
----
-
-### 12. Technology Summary
-
-- **Language:** PHP 8.1+
-- **Database:** SQLite 3
-- **Architecture:** Custom lightweight MVC
-- **Frontend:** Server-rendered HTML + CSS
-- **External Integration:** Telegram Bot API
-- **Dependency Management:** Composer (PSR-4)
-
----
-
-### 13. Conclusion
-
-NEUROMAP (Phases 1–5) is now a fully functional OSINT investigation platform capable of:
-
-- Case management
-- Target profiling
-- Automated advanced dork generation
-- Manual evidence collection
-- Professional reporting
-- Telegram delivery
-
-The system is ready for operational use and can be extended with Phases 6–9 for improved UI, automation, and scalability.
+### Flow F — Report & Delivery
+1. **View/Print Report:** printable HTML report page
+2. **Download TXT:** plain-text file download
+3. **Send to Telegram:**
+   - Build report
+   - Save TXT into `storage/reports`
+   - Send message + document through Telegram
+   - Mark investigation completed
 
 ---
 
-**Document prepared for:** Samuel Adeyinka (BigSam)  
+## 12. UI System
+
+### Layout
+- Shared layout for authenticated pages
+- Login and printable report pages are standalone
+
+### Theme
+- Dark mode default
+- Light mode toggle
+- Preference saved in `localStorage` (`neuromap-theme`)
+
+### Branding
+- Logo: `public/assets/img/logo.png`
+- Overlay: `public/assets/img/overlay.png`
+- Overlay applied across login and main application pages
+
+### UX Behavior
+- Card hover elevation
+- Fade-in page/content animation
+- Sticky topbar
+- Responsive grid behavior
+
+---
+
+## 13. Configuration
+
+Primary config file: `config/app.php`  
+Secrets and environment values: `.env`
+
+Key settings:
+- App name/url/debug
+- SQLite path
+- Telegram bot token/chat ID
+- Admin username/password
+- Storage paths
+
+---
+
+## 14. Security Model
+
+Current security controls:
+- Session authentication for protected routes
+- Output escaping in views
+- Route-level auth checks
+- `.env` excluded from version control
+- Web root expected to be `public/`
+- Storage artifacts kept outside public exposure where possible
+
+Current limitations:
+- Single-operator model
+- Password stored as configured value (not multi-user hashed account system)
+- No role hierarchy yet
+
+---
+
+## 15. Deployment Model
+
+### Local / Kali
+```bash
+composer install
+cp .env.example .env
+sqlite3 storage/neuromap.db < database/schema.sql
+php -S 127.0.0.1:8000 -t public
+```
+
+### Production
+- Host with PHP 8.1+
+- Document root → `public/`
+- Writable `storage/` directories
+- HTTPS recommended
+- Valid Telegram credentials in `.env`
+
+---
+
+## 16. Completed Development Phases
+
+| Phase | Scope | Status |
+|------|------|--------|
+| 1 | Foundation (core, router, DB, auth, dashboard) | Completed |
+| 2 | Investigation + target system | Completed |
+| 3 | Advanced dork engine | Completed |
+| 4 | Report builder + Telegram delivery | Completed |
+| 5 | Evidence collection | Completed |
+| 6 | UI layout consistency | Completed |
+| 7 | Social media scanners | Completed |
+| 8 | Printable report + TXT download | Completed |
+| UI Upgrade | Light/Dark mode + overlay + animations | Completed |
+
+---
+
+## 17. Planned Version 2 Scope
+
+Version 2 intended pipeline:
+
+1. Dork generation (existing)
+2. Live search execution via Brave Search API
+3. Target URL screenshot capture
+4. PDF compilation with embedded evidence
+5. Telegram PDF delivery
+
+### Required for V2
+- Brave Search API key
+- Screenshot API key (recommended)
+- Dompdf (or equivalent PDF library)
+- New services:
+  - `BraveSearchService`
+  - `ScreenshotService`
+  - `PdfReportBuilder`
+  - `PipelineOrchestrator`
+
+### Hosting note
+- API-based V2 can run without VPS
+- Local headless browser automation is better on VPS
+
+---
+
+## 18. Known Constraints (Version 1)
+
+1. Search execution is manual (operator opens links)
+2. No automatic page capture
+3. PDF is browser-print based (not binary PDF library generation)
+4. Single admin operator only
+5. No background job queue
+
+These constraints are intentional for Version 1 simplicity and stability.
+
+---
+
+## 19. Testing Checklist (Release Readiness)
+
+- [ ] Login/logout works
+- [ ] Create investigation with full target fields
+- [ ] Generate dorks returns expected query volume
+- [ ] Generate social scans returns platform queries/profile guesses
+- [ ] Add and delete evidence
+- [ ] View/print report page loads
+- [ ] TXT download works
+- [ ] Telegram message + document delivery works
+- [ ] Dark/Light toggle persists
+- [ ] Logo and overlay render on login and dashboard
+
+---
+
+## 20. Conclusion
+
+NEUROMAP Version 1 is a complete, operational OSINT case workstation.  
+It provides structured investigation management, automated query generation, evidence handling, reporting, and Telegram delivery in a lightweight PHP architecture.
+
+The system is ready for practical use and is architected to support Version 2 automation without requiring a full rewrite.
+
+---
+
+**Document Owner:** Samuel Adeyinka (BigSam)  
 **Project:** NEUROMAP  
-**Status:** Phases 1–5 Complete
+**Version Covered:** 1.0 (Phases 1–8 + UI Upgrade)  
+**Next Milestone:** Version 2 Automated Intelligence Pipeline
