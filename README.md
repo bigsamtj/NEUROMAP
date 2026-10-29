@@ -1,4 +1,4 @@
-# NEUROMAP
+#NEUROMAP
 
 <p align="center">
   <img src="public/assets/img/logo.png" alt="NEUROMAP Logo" width="160">
