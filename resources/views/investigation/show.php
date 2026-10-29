@@ -80,6 +80,7 @@ $title = 'Investigation #' . $investigation['id'];
     <div style="display: flex; gap: 12px; flex-wrap: wrap;">
         <a href="/investigation/<?= $investigation['id'] ?>/generate-dorks" class="btn btn-primary">Generate Dorks</a>
         <a href="/investigation/<?= $investigation['id'] ?>/generate-social" class="btn btn-primary">Generate Social Scans</a>
+        <a href="/investigation/<?= $investigation['id'] ?>/report" class="btn btn-secondary">View / Print Report</a>
         <a href="/investigation/<?= $investigation['id'] ?>/send-report" class="btn btn-telegram">Send Report to Telegram</a>
         <a href="/dashboard" class="btn btn-secondary">Back to Dashboard</a>
     </div>
