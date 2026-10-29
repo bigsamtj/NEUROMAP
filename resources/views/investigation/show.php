@@ -101,8 +101,15 @@ $title = 'Investigation #' . $investigation['id'];
                     <div style="font-family: ui-monospace, monospace; font-size: 0.85rem; color: #a5f3fc; word-break: break-all; flex: 1;">
                         <?= htmlspecialchars($query['query_string']) ?>
                     </div>
-                    <a href="https://www.google.com/search?q=<?= urlencode($query['query_string']) ?>" target="_blank" rel="noopener" style="color: var(--accent); text-decoration: none; font-size: 0.85rem; white-space: nowrap;">
-                        Open in Google ↗
+                    <?php
+                        $isUrl = str_starts_with($query['query_string'], 'http://') || str_starts_with($query['query_string'], 'https://');
+                        $openLink = $isUrl
+                            ? $query['query_string']
+                            : 'https://www.google.com/search?q=' . urlencode($query['query_string']);
+                        $openLabel = $isUrl ? 'Open Profile ↗' : 'Open in Google ↗';
+                    ?>
+                    <a href="<?= htmlspecialchars($openLink) ?>" target="_blank" rel="noopener" style="color: var(--accent); text-decoration: none; font-size: 0.85rem; white-space: nowrap;">
+                        <?= $openLabel ?>
                     </a>
                 </div>
             <?php endforeach; ?>
