@@ -6,6 +6,7 @@ use App\Core\Helper;
 use App\Core\App;
 use App\Core\Database;
 use App\Services\DorkEngine;
+use App\Services\SocialScanner;
 use App\Services\ReportBuilder;
 use App\Services\TelegramService;
 
@@ -83,7 +84,7 @@ class InvestigationController
         );
 
         $queries = Database::fetchAll(
-            "SELECT * FROM queries WHERE investigation_id = ? ORDER BY created_at DESC",
+            "SELECT * FROM queries WHERE investigation_id = ? ORDER BY query_type, created_at DESC",
             [$id]
         );
 
@@ -125,8 +126,11 @@ class InvestigationController
             return;
         }
 
-        // Clear previous queries
-        Database::query("DELETE FROM queries WHERE investigation_id = ?", [$id]);
+        // Clear previous google dorks only
+        Database::query(
+            "DELETE FROM queries WHERE investigation_id = ? AND query_type = 'google_dork'",
+            [$id]
+        );
 
         $engine = new DorkEngine($target);
         $dorks  = $engine->generate();
@@ -151,8 +155,65 @@ class InvestigationController
     }
 
     /**
-     * Generate report and send to Telegram
+     * Generate social media scans
      */
+    public function generateSocial(string $id): void
+    {
+        Helper::requireAuth();
+
+        $investigation = Database::fetch(
+            "SELECT * FROM investigations WHERE id = ?",
+            [$id]
+        );
+
+        if (!$investigation) {
+            http_response_code(404);
+            echo "Investigation not found.";
+            return;
+        }
+
+        $target = Database::fetch(
+            "SELECT * FROM targets WHERE investigation_id = ?",
+            [$id]
+        );
+
+        if (!$target) {
+            Helper::redirect('/investigation/' . $id);
+            return;
+        }
+
+        // Clear previous social queries
+        Database::query(
+            "DELETE FROM queries WHERE investigation_id = ? AND query_type = 'social'",
+            [$id]
+        );
+
+        $scanner = new SocialScanner($target);
+        $results = $scanner->generate();
+
+        foreach ($results as $item) {
+            $queryString = $item['query'] ?? $item['url'] ?? '';
+
+            if (empty($queryString)) continue;
+
+            Database::insert('queries', [
+                'investigation_id' => $id,
+                'target_id'        => $target['id'],
+                'query_type'       => 'social',
+                'platform'         => $item['platform'] ?? 'unknown',
+                'query_string'     => $queryString,
+                'status'           => 'pending'
+            ]);
+        }
+
+        Database::update('investigations', [
+            'status'     => 'running',
+            'updated_at' => date('Y-m-d H:i:s')
+        ], 'id = :id', ['id' => $id]);
+
+        Helper::redirect('/investigation/' . $id);
+    }
+
     public function sendReport(string $id): void
     {
         Helper::requireAuth();
@@ -183,12 +244,10 @@ class InvestigationController
             [$id]
         );
 
-        // Build report
         $builder = new ReportBuilder($investigation, $target, $queries, $evidence);
         $telegramText = $builder->buildTelegramReport();
         $plainText    = $builder->buildPlainReport();
 
-        // Save report to file
         $reportsDir = __DIR__ . '/../../storage/reports';
         if (!is_dir($reportsDir)) {
             mkdir($reportsDir, 0755, true);
@@ -198,7 +257,6 @@ class InvestigationController
         $filePath = $reportsDir . '/' . $fileName;
         file_put_contents($filePath, $plainText);
 
-        // Save to database
         Database::insert('reports', [
             'investigation_id' => $id,
             'title'            => 'Report for Investigation #' . $id,
@@ -207,20 +265,17 @@ class InvestigationController
             'sent_to_telegram' => 0
         ]);
 
-        // Send to Telegram
         $telegram = new TelegramService();
         $sent = $telegram->sendMessage($telegramText);
 
-        // Also try sending the file
         if ($sent) {
             $telegram->sendDocument($filePath, "Full report for Investigation #{$id}");
-            
+
             Database::update('reports', [
                 'sent_to_telegram' => 1
             ], 'investigation_id = :id', ['id' => $id]);
         }
 
-        // Update investigation status
         Database::update('investigations', [
             'status'     => 'completed',
             'updated_at' => date('Y-m-d H:i:s')
